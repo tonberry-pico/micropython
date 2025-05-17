@@ -136,6 +136,13 @@ if(MICROPY_PY_BTREE)
         ${MICROPY_LIB_BERKELEY_DIR}/include
     )
 
+    target_link_options(micropy_extmod_btree PRIVATE
+        -Wl,--wrap=malloc
+        -Wl,--wrap=free
+        -Wl,--wrap=realloc
+        -Wl,--wrap=calloc
+    )
+
     if(NOT BERKELEY_DB_CONFIG_FILE)
         set(BERKELEY_DB_CONFIG_FILE "${MICROPY_DIR}/extmod/berkeley-db/berkeley_db_config_port.h")
     endif()
@@ -153,11 +160,13 @@ if(MICROPY_PY_BTREE)
 
     list(APPEND MICROPY_DEF_CORE
         MICROPY_PY_BTREE=1
+        MICROPY_STREAMS_POSIX_API # Required for mp_stream_posix_ functions if !MICROPY_ENABLE_DYNRUNTIME
         BERKELEY_DB_CONFIG_FILE="${BERKELEY_DB_CONFIG_FILE}"
     )
 
     list(APPEND MICROPY_SOURCE_EXTMOD
         ${MICROPY_EXTMOD_DIR}/modbtree.c
+        ${MICROPY_EXTMOD_DIR}/modbtree_malloc.c
     )
 endif()
 

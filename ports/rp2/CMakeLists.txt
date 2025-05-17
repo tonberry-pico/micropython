@@ -95,6 +95,8 @@ include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
 # Define the top-level project
 project(${MICROPY_TARGET})
 
+set(SKIP_PICO_MALLOC 1)
+
 pico_sdk_init()
 
 include(${MICROPY_DIR}/py/usermod.cmake)
@@ -509,6 +511,10 @@ target_link_libraries(${MICROPY_TARGET} micropy_lib_mbedtls)
 
 target_link_libraries(${MICROPY_TARGET} usermod)
 
+if (MICROPY_PY_BTREE)
+    target_link_libraries(${MICROPY_TARGET} micropy_extmod_btree)
+endif()
+
 target_include_directories(${MICROPY_TARGET} PRIVATE
     ${MICROPY_INC_CORE}
     ${MICROPY_INC_USERMOD}
@@ -526,6 +532,11 @@ target_compile_options(${MICROPY_TARGET} PRIVATE
 target_link_options(${MICROPY_TARGET} PRIVATE
     -Wl,--defsym=__micropy_c_heap_size__=${MICROPY_C_HEAP_SIZE}
     -Wl,--wrap=runtime_init_clocks
+
+    -Wl,--wrap=malloc
+    -Wl,--wrap=free
+    -Wl,--wrap=realloc
+    -Wl,--wrap=calloc
 )
 
 if(DEFINED PICO_FLASH_SIZE_BYTES)
@@ -572,6 +583,7 @@ set_source_files_properties(
 )
 
 target_compile_definitions(${MICROPY_TARGET} PRIVATE
+    ${MICROPY_DEF_CORE} # Required for btree module definitions
     ${MICROPY_DEF_BOARD}
     FFCONF_H=\"${MICROPY_OOFATFS_DIR}/ffconf.h\"
     LFS1_NO_MALLOC LFS1_NO_DEBUG LFS1_NO_WARN LFS1_NO_ERROR LFS1_NO_ASSERT
