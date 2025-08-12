@@ -479,6 +479,15 @@ if (MICROPY_PY_NETWORK_WIZNET5K)
     )
 endif()
 
+if (MICROPY_PY_BTREE)
+    target_link_libraries(${MICROPY_TARGET} micropy_extmod_btree)
+    target_compile_definitions(${MICROPY_TARGET} PRIVATE
+        MICROPY_STREAMS_POSIX_API=1
+        MICROPY_BERKELEY_DB_DEFPSIZE=1024
+        MICROPY_BERKELEY_DB_MINCACHE=3
+    )
+endif()
+
 # Add qstr sources for extmod and usermod, in case they are modified by components above.
 list(APPEND MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_EXTMOD}
@@ -572,6 +581,7 @@ set_source_files_properties(
 )
 
 target_compile_definitions(${MICROPY_TARGET} PRIVATE
+    ${MICROPY_DEF_CORE}
     ${MICROPY_DEF_BOARD}
     FFCONF_H=\"${MICROPY_OOFATFS_DIR}/ffconf.h\"
     LFS1_NO_MALLOC LFS1_NO_DEBUG LFS1_NO_WARN LFS1_NO_ERROR LFS1_NO_ASSERT
