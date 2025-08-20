@@ -250,7 +250,7 @@ SECTIONS
     __GcHeapEnd = ORIGIN(RAM) + LENGTH(RAM);
 
     /* Define memory for the C stack */
-    __StackOneTop = ORIGIN(SCRATCH_X) + LENGTH(SCRATCH_X);
+    __StackOneTop = ORIGIN(SCRATCH_X) + SIZEOF(.stack1_dummy);
     __StackTop = ORIGIN(SCRATCH_Y) + LENGTH(SCRATCH_Y);
     __StackOneBottom = __StackOneTop - SIZEOF(.stack1_dummy);
     __StackBottom = __StackTop - SIZEOF(.stack_dummy);
