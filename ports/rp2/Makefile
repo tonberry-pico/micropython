@@ -61,7 +61,7 @@ HELP_BUILD_ERROR ?= "See \033[1;31mhttps://github.com/micropython/micropython/wi
 
 all:
 	$(Q)[ -f ../../lib/pico-sdk/README.md ] || (echo -e $(HELP_PICO_SDK_SUBMODULE); false)
-	$(Q)[ -e $(BUILD)/Makefile ] || cmake -S . -B $(BUILD) -DPICO_BUILD_DOCS=0 ${CMAKE_ARGS}
+	$(Q)[ -e $(BUILD)/Makefile ] || cmake -S . -B $(BUILD) -DPICO_BUILD_DOCS=0 ${CMAKE_ARGS} -DCMAKE_EXPORT_COMPILE_COMMANDS=On
 	$(Q)$(MAKE) $(MAKE_ARGS) -C $(BUILD) || (echo -e $(HELP_BUILD_ERROR); false)
 
 clean:
